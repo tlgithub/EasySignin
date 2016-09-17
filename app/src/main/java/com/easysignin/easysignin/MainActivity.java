@@ -1,8 +1,12 @@
 package com.easysignin.easysignin;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,14 +16,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private RecyclerView classRecycler;
+    private List<Integer> markers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        markers = Arrays.asList(R.drawable.circle,R.drawable.circle2,R.drawable.circle3
+                ,R.drawable.circle4,R.drawable.circle5,R.drawable.circle6);
+        classRecycler = (RecyclerView) findViewById(R.id.class_recycler);
+        classRecycler.setLayoutManager(new LinearLayoutManager(this));
+        classRecycler.setAdapter(new ClassAdapter(markers));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -97,5 +113,37 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class ClassAdapter extends RecyclerView.Adapter<ClassViewHolder> {
+        private List<Integer> markers;
+        public ClassAdapter(List<Integer> markers) {
+            this.markers = markers;
+        }
+
+        @Override
+        public ClassViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+             View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.classitem,null);
+            return new ClassViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ClassViewHolder holder, int position) {
+            holder.timelineView.setMarkerDrawable(getResources().getDrawable(markers.get(position%6)));
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 20;
+        }
+    }
+
+    private class ClassViewHolder extends RecyclerView.ViewHolder{
+        private TimelineView timelineView;
+        public ClassViewHolder(View itemView) {
+            super(itemView);
+            timelineView = (TimelineView) itemView.findViewById(R.id.timeline);
+        }
     }
 }
